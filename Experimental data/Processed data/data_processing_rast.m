@@ -9,24 +9,9 @@ cross_corr=1;
 data_dir="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\March\Experimental trials\";
 fileNames=["04042025_3718rast_2input_data", "04042025_2416rast_2input_data","03042025_2412rast_2input_data", "03042025_1611rast_2input_data", "02042025_0517rast_2input_data", "01042025_1015rast_2input_data", "01042025_4012rast_2input_data", "27032025_5011rast_2input_data", "27032025_3508rast_2input_data"];%"27032025_5011rast_2input_data"; %["27032025_3508rast_2input_data"];
 
-% data_dir="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\March\multi_input_data\";
-% fileNames="27072025_3411rast_2input_data";
+
 data_dir_save="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\July\Hammerstein model fitting\";
 
-%%%% 3 input data set %%%%%%
-% cross_corr=0; %Whether to calculate cross-correlation or fitting accuracy
-% 
-% if(cross_corr)
-%     data_dir="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\July\3 input Hammerstein fitting\";
-%     fileNames="22072025_2719rast_data";
-%     data_dir_save="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\July\3 input Hammerstein fitting\fitted params\";
-% else
-%     data_dir="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\July\3 input Hammerstein fitting\fitting data\";
-%     fileNames=["22072025_2719rast_data_1","22072025_2719rast_data_2","22072025_2719rast_data_3","22072025_2719rast_data_4","22072025_2719rast_data_5"];
-%     data_dir_save="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Data\Year 2\July\3 input Hammerstein fitting\fitting data\fitted params\";
-% end
-
-%%%%%%%%%%%%
 
 
 Ts=0.025;
@@ -137,5 +122,6 @@ q_clean{out}=remove_response_jumps(q_arr{out});
 end
 
     [q_noOut, ~, ~, els_removed]=remove_response_outliers_general(q_clean);
+
 
 end
