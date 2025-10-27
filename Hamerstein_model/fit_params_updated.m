@@ -10,7 +10,7 @@ cross_corr=1;
 data_dir="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Matlab\Year 3 code\Model ID IFAC paper\Experimental data\Processed data\";
 fileNames=["04042025_3718rast_2input_data", "04042025_2416rast_2input_data","03042025_2412rast_2input_data", "03042025_1611rast_2input_data", "02042025_0517rast_2input_data", "01042025_1015rast_2input_data", "01042025_4012rast_2input_data", "27032025_5011rast_2input_data", "27032025_3508rast_2input_data"];%"27032025_5011rast_2input_data"; %["27032025_3508rast_2input_data"];
 
-data_dir_save="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Matlab\Year 3 code\Model ID IFAC paper\Hammerstein\Fitted models\";
+data_dir_save="C:\Users\lgh1g19\OneDrive - University of Southampton\PhD\Matlab\Year 3 code\Model ID IFAC paper\Hammerstein_model\Fitted models\";
 num_inputs=2;
 
 
@@ -259,4 +259,5 @@ mean_params(num_outputs*num_muscles+(num_inputs+1)*m-num_inputs:num_outputs*num_
 end
 
 end
+
 
