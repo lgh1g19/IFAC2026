@@ -1,0 +1,122 @@
+function [params, tend, m, gen] = param_return()
+
+
+%Returns each of the parameters required by the model, as given in
+%https://ieeexplore.ieee.org/document/6398278 and https://eprints.soton.ac.uk/388627/
+
+
+
+%%
+% Order of muscles: FDP, FDS, EI, EC, ECR, ECU
+m.max_force=[0.015, 0.12, 0.05, 0.05, 0.05, 0.05];
+
+%Initialise values (needed for slx implementation)
+m.irc.a1=zeros(1,6);
+m.irc.a2=zeros(1,6);
+m.irc.a3=zeros(1,6);
+
+gen.max_stim=300;
+
+musc=6;
+gen.num_muscles=musc;
+gen.num_joints=3;
+
+
+%% Array mapping
+h=6; w=4; %Dimensions of electrode array
+
+obj.height=h;
+obj.width=w;
+
+obj.musc_arr=cell(1,musc);
+
+obj.num_muscles=musc;
+
+
+%This defines elements of the electrode array mapping, i.e. parameters
+%a_{i,j} in eqn (2) in https://eprints.soton.ac.uk/493127/
+%FDP
+obj.musc_arr{1}=[zeros(4,4); 0,0,0,0.25;0,0,0,0.25];
+%FDS
+obj.musc_arr{2}=[zeros(3,4); 0,0,0,0.25;0,0,0,0.5;0,0,0,0.5];
+%EI
+obj.musc_arr{3}=[zeros(3,4); 0, 0.5,0,0; 0.25, 1,0,0; 0,0.75,0,0];
+%EC
+obj.musc_arr{4}=[0,0,0.75,0;0,0,1,0;0,0,0.8,0.25;0,0,0.7,0.25;0,0,0.25,0;0,0,0,0];
+%ECR
+obj.musc_arr{5}=[0,0.25,0.9,0.5;0,1,1,0;0,0.7,0.7,0;0,0.5,0.5,0;0,0,0.25,0;0,0,0,0];
+%ECU
+obj.musc_arr{6}=[0,0.5,0.25,0;0,0.8,0.25,0;0.25,0.9,0,0;0.25,0.7,0,0;0,0,0,0;0,0,0,0];
+
+
+
+
+gen.arr_map_obj=obj;
+
+%% Constant definitions of bone and joint structure
+
+params.J1=1e-4; params.J2=1e-4; params.J3=1e-4; %Values from thesis
+params.b1=0.4; params.b2=0.4; params.b3=0.4; %Values from thesis
+params.t_01=2*pi/3; params.t_03=pi/3; params.t_02=deg2rad(80); %Resting angle - elements of r in IFAC paper
+params.k1=0.8; params.k2=0.8; params.k3=0.8; %Values from thesis
+
+
+%Tendon constant definitions
+tend.fdp.d1=8.32; tend.fdp.d2=5.67; tend.fdp.y1=8.32; tend.fdp.y2=7.5;
+tend.fds.d1=9.56; tend.fds.d2=4.13; tend.fds.y1=8.14; tend.fds.y2=6.73;
+tend.ecr.h=-11.72; tend.ecr.b=1.14;
+tend.ecu.h=-8.51; tend.ecu.b=1.55;
+
+tend.ec.r1=14.12; tend.ec.r2=15; %Second parameter picked to give good response (different from other param_return functions)
+tend.es.r=2.92;
+tend.ei.r1=15; tend.ei.r2=15; %Second parameter picked to give good response (and first picked to approximately match EC r1 param)
+tend.rb.h=-0.47; tend.rb.b=2.54;
+tend.ub.h=0.57; tend.ub.b=1.7;
+
+%Values not specified in paper but these seem to work
+tend.w1= 0.3; tend.w2= 0.3; tend.w3= 0.4;
+
+m.omega_n=2.7; %\Omega parameter
+
+%%
+
+%Values computed from previous parameters 
+
+%Need to initialise here for rpi deployment
+params.l1=0; params.l2=0; params.l3=0;
+params.c1=0; params.c2=0; params.c3=0;
+params.m1=0; params.m2=0; params.m3=0;
+
+params.q_thres1=0; params.q_thres2=0; params.q_thres3=0;
+params.q_cutoff1=0; params.q_cutoff2=0;
+params.d_thres1=0; params.d_thres2=0;
+
+%Threshold values for joint stiffness to start to increase
+params.q_thres3=deg2rad(15);
+
+params.q_thres1=deg2rad(53);
+    params.q_cutoff1=deg2rad(48);
+    params.q_thres2=deg2rad(-18);
+    params.q_cutoff2=deg2rad(-28);
+
+
+params.d_thres1=params.q_thres1-params.q_cutoff1;
+params.d_thres2=params.q_thres2-params.q_cutoff2;
+
+params.l1=0.1; params.l2=0.05; params.l3=0.06; %Values from thesis
+params.c1=0.5*params.l1; params.c2=0.5*params.l2; params.c3=0.5*params.l3;
+
+params.m1=0.4; params.m2=0.25; params.m3=0.2; %Values from thesis
+
+
+
+%%%%%%%% Default values%%%%%%%%%%%%%
+d=40; s=260;
+[a2,a3]=dead_sat_to_a_year2(d,s);
+
+
+m.irc.a1=m.max_force; %\alpha parameter from eqn (3). Order: R_FDP, R_FDS, R_EI, R_EC, R_ECR, R_ECU
+m.irc.a2=a2*ones(1, gen.num_muscles); %\beta parameter from eqn (3)
+m.irc.a3=a3*ones(1, gen.num_muscles); %\gamma parameter from eqn (3)
+
+end
